@@ -66,9 +66,10 @@ class graph(object):
         else:
             print('Unknown type.')
     
-    def draw(self, c=None, pos=None):
+    def draw(self, c=None, pos=None, weight_colors=False):
         A = self.A - _np.diag(_np.diag(self.A)) # remove self-loops
-        
+        if weight_colors:
+            A = _np.round(A, 3)  # so edge labels aren't recurring numbers
         if self.isSymmetric():
             G = _nx.from_numpy_matrix(A)
         else:
@@ -80,12 +81,19 @@ class graph(object):
 
         edges, weights = zip(*_nx.get_edge_attributes(G, 'weight').items())
         if c is None:
-            _nx.draw(G, pos, node_size=500, node_color="grey", with_labels=True, font_size=10, edge_color=weights,
-                    width=2, edge_vmin=0, edge_vmax=1)
+            if weight_colors:
+                _nx.draw(G, pos, node_size=500, node_color="grey", with_labels=True, font_size=10, edge_color=weights,
+                        width=2, edge_vmin=0, edge_vmax=1)
+                _nx.draw_networkx_edge_labels(G, pos, edge_labels=_nx.get_edge_attributes(G, "weight"))
+            else:
+                _nx.draw(G, pos, node_size=500, node_color="grey", with_labels=True, font_size=10, width=2)
         else:
             col = [graph.colors[i] for i in c]
-            _nx.draw(G, pos, node_color=col, node_size=500, with_labels=True, font_size=10, edge_color=weights,
+            if weight_colors:
+                _nx.draw(G, pos, node_color=col, node_size=500, with_labels=True, font_size=10, edge_color=weights,
                     width=2, edge_vmin=0, edge_vmax=1)
+            else:
+                _nx.draw(G, pos, node_color=col, node_size=500, with_labels=True, font_size=10, width=2)
             
     def spectralClustering(self, nc, variant='rw'):
         P = self.transitionMatrix(variant)
