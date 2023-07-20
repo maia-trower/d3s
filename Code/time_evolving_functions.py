@@ -2,7 +2,7 @@ import networkx as nx
 import scipy as _sp
 import numpy as np
 import matplotlib.pyplot as plt
-from d3s.d3s.algorithms import dinv, sortEig
+from d3s.algorithms import dinv, sortEig
 
 
 def evolving_eigs(As, evs=5, plot=True, which="LM", fb=True):

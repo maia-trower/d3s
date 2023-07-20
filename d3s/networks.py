@@ -77,12 +77,15 @@ class graph(object):
         if pos is None:
             # pos = nx.spring_layout(G)
             pos = _nx.nx_agraph.graphviz_layout(G, prog='neato')
-        
+
+        edges, weights = zip(*_nx.get_edge_attributes(G, 'weight').items())
         if c is None:
-            _nx.draw(G, pos, node_size=500, with_labels=True, font_size=10)
+            _nx.draw(G, pos, node_size=500, node_color="grey", with_labels=True, font_size=10, edge_color=weights,
+                    width=2, edge_vmin=0, edge_vmax=1)
         else:
             col = [graph.colors[i] for i in c]
-            _nx.draw(G, pos, node_color=col, node_size=500, with_labels=True, font_size=10)
+            _nx.draw(G, pos, node_color=col, node_size=500, with_labels=True, font_size=10, edge_color=weights,
+                    width=2, edge_vmin=0, edge_vmax=1)
             
     def spectralClustering(self, nc, variant='rw'):
         P = self.transitionMatrix(variant)
