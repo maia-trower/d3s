@@ -112,3 +112,26 @@ class tgraph(object):
         d, V = sortEig(Q, evs=nc, which='LR')
         _, c = _sp.cluster.vq.kmeans2(_np.real(V), nc, iter=100, minit='++')
         return (d, V, c)
+
+    def randomWalk(self, x0, s):
+        '''
+        Generate random walk of length s*number of time steps.
+        '''
+        m = s * self.T # length of walk
+        x = _np.zeros(m, dtype=_np.uint64)
+        x[0] = x0
+        j = 0
+        for i in range(self.T):  # for each time step
+            # generate s random walker locations
+            g = self[i]
+            if j + s == m:
+                x_temp = g.randomWalk(x0, s - 1)
+                x0 = x_temp[-1]
+
+                x[j + 1:j + s] = x_temp
+            else:
+                x_temp = g.randomWalk(x0, s)
+                x0 = x_temp[-1]
+                x[j + 1:j + s + 1] = x_temp
+            j += s
+        return x
